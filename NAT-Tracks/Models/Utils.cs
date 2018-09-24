@@ -37,7 +37,7 @@ namespace NAT_Tracks.Models
             // Parse even further
             List<List<string>> parsedList = new List<List<string>>();
 
-            // Dodgy af but it works :)
+            // Dodgy but it works :)
             int getNextFour = 0;
 
             // Track
@@ -81,17 +81,31 @@ namespace NAT_Tracks.Models
             foreach(List<string> list in parsedList)
             {
                 // Direction & Flight levels
-                string direction = string.Empty;
-                string flightLevels = string.Empty;
-                if (list[1].Contains("EAST LVLS NIL"))
+                Direction direction = Direction.UNKNOWN;
+                List<int> flightLevels = new List<int>();
+                if (list[1].Trim().ToUpper().Contains("EAST LVLS NIL"))
                 {
-                    direction = "WEST";
-                    flightLevels = list[2].Remove(0, 10);
+                    direction = Direction.WEST;
+
+                    // Split into list of strings
+                    List<string> rawFlightLevels = list[2].Remove(0, 10).Split(" ").ToList();
+                    foreach (string fl in rawFlightLevels)
+                    {
+                        // Convert to integer
+                        flightLevels.Add(Int32.Parse(fl) * 1000);
+                    }
                 } 
                 else
                 {
-                    direction = "EAST";
-                    flightLevels = list[1].Remove(0, 10);
+                    direction = Direction.EAST;
+
+                    // Split into list of strings
+                    List<string> rawFlightLevels = list[1].Remove(0, 10).Split(" ").ToList();
+                    foreach (string fl in rawFlightLevels)
+                    {
+                        // Convert to integer
+                        flightLevels.Add(Int32.Parse(fl) * 1000);
+                    }
                 }
 
                 // Build new track object

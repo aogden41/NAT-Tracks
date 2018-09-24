@@ -13,8 +13,15 @@ namespace NAT_Tracks.Models
 
         public string Route { get; set; }
 
-        public string FlightLevels { get; set; }
+        public List<int> FlightLevels { get; set; }
 
-        public string Direction { get; set; }
+        public Direction Direction { get; set; }
+    }
+
+    public enum Direction
+    {
+        UNKNOWN,
+        WEST,
+        EAST
     }
 }
