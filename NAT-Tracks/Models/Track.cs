@@ -11,7 +11,7 @@ namespace NAT_Tracks.Models
 
         public int TMI { get; set; }
 
-        public string Route { get; set; }
+        public List<string> Route { get; set; }
 
         public List<int> FlightLevels { get; set; }
 

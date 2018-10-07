@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Internal;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -108,12 +109,40 @@ namespace NAT_Tracks.Models
                     }
                 }
 
+                // Translate route into decimal coordinates
+                List<string> routeCoords = list[0].Remove(0, 2).Split(" ").ToList();
+                List<string> finalRoute = new List<string>();
+                foreach(string point in routeCoords)
+                {
+                    if (point.Contains("/")) // If it is a coordinate
+                    {
+                        // Split the coordinates
+                        string[] newPoint = point.Split("/");
+
+                        // Parse lat/lon to a double value
+                        string latitude = double.Parse(newPoint[0]).ToString("#0.00", CultureInfo.InvariantCulture);
+                        string longitude = double.Parse(newPoint[1]).ToString("#0.00", CultureInfo.InvariantCulture);
+
+                        // Create new string array and join to a lat/lon string
+                        string[] array = new string[2] { latitude, longitude };
+
+                        // Add to the final route list
+                        finalRoute.Add(string.Join(",", array));
+                    }
+                    else // If it is a waypoint
+                    {
+                        // Just add the waypoint to the list
+                        finalRoute.Add(point);
+                    }
+                    
+                }
+
                 // Build new track object
                 Track trackObj = new Track
                 {
                     Id = list[0][0],
                     TMI = DateTime.Now.DayOfYear,
-                    Route = list[0].Remove(0, 2),
+                    Route = finalRoute,
                     Direction = direction,
                     FlightLevels = flightLevels
                 };
