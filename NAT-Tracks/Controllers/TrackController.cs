@@ -10,6 +10,14 @@ namespace NAT_Tracks.Controllers
     [Route("api/track")]
     public class TrackController : Controller
     {
+        // GET api/
+        [HttpGet]
+        [Route("/api")]
+        public string Index()
+        {
+            return "To fetch all tracks, type '/api/track' in the URL bar. To fetch a specific track, type '/api/track/[track identifier]' in the URL bar.";
+        }
+
         // GET api/track
         [HttpGet]
         public IEnumerable<Track> Get()

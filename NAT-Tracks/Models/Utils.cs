@@ -120,14 +120,14 @@ namespace NAT_Tracks.Models
                         string[] newPoint = point.Split("/");
 
                         // Parse lat/lon to a double value
-                        string latitude = double.Parse(newPoint[0]).ToString("#0.00", CultureInfo.InvariantCulture);
-                        string longitude = double.Parse(newPoint[1]).ToString("#0.00", CultureInfo.InvariantCulture);
+                        string latitude = newPoint[0] + 'N';
+                        string longitude = newPoint[1] + 'W';
 
                         // Create new string array and join to a lat/lon string
                         string[] array = new string[2] { latitude, longitude };
 
                         // Add to the final route list
-                        finalRoute.Add(string.Join(",", array));
+                        finalRoute.Add(string.Join("", array));
                     }
                     else // If it is a waypoint
                     {
