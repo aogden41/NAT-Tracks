@@ -1,36 +1,28 @@
-﻿using Microsoft.EntityFrameworkCore.Internal;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+using System.Text;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace NAT_Tracks.Models
 {
     public static class Utils
     {
-        private static string _trackUrl = "https://pilotweb.nas.faa.gov/common/nat.html";
+        // Static URLs
+        private const string _trackUrl = "https://www.notams.faa.gov/common/nat.html";
+        private const string _fixesJson = "https://resources.ganderoceanic.com/data/fixes.json";
 
-        public static List<Track> ParseTracks()
+        public static List<Track> ParseTracks(bool isMetres = false)
         {
-            // Define content variable to store data from webpage
-            string content = string.Empty;
+            // NAT tracks
+            string content = new WebClient().DownloadString(_trackUrl);
 
-            // Handle the request
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(_trackUrl);
-
-            // Handle the response
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            Stream responseStream = response.GetResponseStream();
-
-            // Read file
-            using (StreamReader reader = new StreamReader(responseStream))
-            {
-                content = reader.ReadToEnd();
-            }
+            // String of waypoint fixes & coords
+            string fixesDataJson = new WebClient().DownloadString(_fixesJson);
 
             // Parse string into a list of strings
             List<string> splitList = content.Split("\n").ToList();
@@ -44,13 +36,15 @@ namespace NAT_Tracks.Models
             // Track
             List<string> track = new List<string>();
 
+            string tmi = string.Empty;
+
             // Get the tracks and their data
             for (int i = 0; i < splitList.Count; i++)
             {
                 try
                 {
                     // If the row is a track routing
-                    if ((Char.IsLetter(splitList[i][0]) && Char.IsWhiteSpace(splitList[i][1])) || getNextFour > 0)
+                    if ((char.IsLetter(splitList[i][0]) && char.IsWhiteSpace(splitList[i][1])) || getNextFour > 0)
                     {
                         // Start incrementing to get the next four rows
                         getNextFour++;
@@ -68,8 +62,15 @@ namespace NAT_Tracks.Models
                         // Add to the track
                         track.Add(splitList[i]);
                     }
+                    else if (splitList[i].Contains("TMI IS")) 
+                    {
+                        tmi = Convert.ToString(splitList[i][10] + splitList[i][11] + splitList[i][12]);
+
+                        // Add amendment character if exists
+                        if (char.IsLetter(splitList[i][13])) tmi += splitList[i][13];
+                    }
                 }
-                catch (Exception ex) // Catch any exception
+                catch (Exception) // Catch any exception
                 {
                     break;
                 }
@@ -84,6 +85,8 @@ namespace NAT_Tracks.Models
                 // Direction & Flight levels
                 Direction direction = Direction.UNKNOWN;
                 List<int> flightLevels = new List<int>();
+
+                // If no east levels
                 if (list[1].Trim().ToUpper().Contains("EAST LVLS NIL"))
                 {
                     direction = Direction.WEST;
@@ -92,8 +95,14 @@ namespace NAT_Tracks.Models
                     List<string> rawFlightLevels = list[2].Remove(0, 10).Split(" ").ToList();
                     foreach (string fl in rawFlightLevels)
                     {
-                        // Convert to integer
-                        flightLevels.Add(Int32.Parse(fl) * 1000);
+                        if (isMetres)
+                        {
+                            flightLevels.Add(Convert.ToInt32((int.Parse(fl) * 100) / 3.2808));
+                        }
+                        else
+                        {
+                            flightLevels.Add(int.Parse(fl) * 100);
+                        }
                     }
                 } 
                 else
@@ -104,14 +113,20 @@ namespace NAT_Tracks.Models
                     List<string> rawFlightLevels = list[1].Remove(0, 10).Split(" ").ToList();
                     foreach (string fl in rawFlightLevels)
                     {
-                        // Convert to integer
-                        flightLevels.Add(Int32.Parse(fl) * 1000);
+                        if (isMetres)
+                        {
+                            flightLevels.Add(Convert.ToInt32((int.Parse(fl) * 100) / 3.2808));
+                        }
+                        else 
+                        {
+                            flightLevels.Add(int.Parse(fl) * 100);
+                        }                        
                     }
                 }
 
                 // Translate route into decimal coordinates
                 List<string> routeCoords = list[0].Remove(0, 2).Split(" ").ToList();
-                List<string> finalRoute = new List<string>();
+                List<Fix> finalRoute = new List<Fix>();
                 foreach(string point in routeCoords)
                 {
                     if (point.Contains("/")) // If it is a coordinate
@@ -120,28 +135,39 @@ namespace NAT_Tracks.Models
                         string[] newPoint = point.Split("/");
 
                         // Parse lat/lon to a double value
-                        string latitude = double.Parse(newPoint[0]).ToString("#0.00", CultureInfo.InvariantCulture);
-                        string longitude = double.Parse(newPoint[1]).ToString("#0.00", CultureInfo.InvariantCulture);
+                        double latitude = double.Parse(newPoint[0]);
+                        double longitude = double.Parse(newPoint[1]);
 
-                        // Create new string array and join to a lat/lon string
-                        string[] array = new string[2] { latitude, longitude };
+                        StringBuilder sb = new StringBuilder();
+
+                        Fix fix = new Fix(point, latitude, longitude);
 
                         // Add to the final route list
-                        finalRoute.Add(string.Join(",", array));
+                        finalRoute.Add(fix);
                     }
                     else // If it is a waypoint
                     {
-                        // Just add the waypoint to the list
-                        finalRoute.Add(point);
-                    }
-                    
+                        JArray jsonFixes = JArray.Parse(JObject.Parse(fixesDataJson)["nat_fixes"].ToString());
+
+                        try
+                        {
+                            JToken jsonFix = jsonFixes.Where(fix => fix["fix"].ToString() == point).First();
+
+                            finalRoute.Add(new Fix(jsonFix["fix"].ToString(), (double) jsonFix["lat"], (double) jsonFix["lon"]));
+                        }
+                        catch (Exception)
+                        {
+                            // Add without coordinates
+                            finalRoute.Add(new Fix(point));
+                        }
+                    }                    
                 }
 
                 // Build new track object
                 Track trackObj = new Track
                 {
                     Id = list[0][0],
-                    TMI = DateTime.Now.DayOfYear,
+                    TMI = tmi,
                     Route = finalRoute,
                     Direction = direction,
                     FlightLevels = flightLevels
