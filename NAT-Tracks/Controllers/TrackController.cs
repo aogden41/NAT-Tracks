@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using NAT_Tracks.Models;
 
@@ -16,7 +17,16 @@ namespace NAT_Tracks.Controllers
         [Route("/api")]
         public string Index()
         {
-            return "To fetch all tracks, type '/api/tracks' in the URL bar. To fetch a specific track, type '/api/track/[track identifier]' in the URL bar.";
+            StringBuilder sb = new StringBuilder();
+
+            sb.Append("NAT Track API\n\nUsage:\n");
+            sb.Append("Get all tracks: /api/tracks\n");
+            sb.Append("Get all tracks (altitude as metres): /api/tracks?si=true\n");
+            sb.Append("Get single track: /api/tracks?id={track ID} (eg: /api/tracks?id=a)\n");
+            sb.Append("Get single track (altitude as metres): /api/tracks?id={track ID}&si=true\n\n");
+            sb.Append("Author: Andrew Ogden (1336925)");
+
+            return sb.ToString();
         }
 
         /// <summary>
