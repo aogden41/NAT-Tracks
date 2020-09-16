@@ -14,27 +14,27 @@ namespace NAT_Tracks.Controllers
         /// </summary>
         /// <returns>API instructions</returns>
         [HttpGet]
-        [Route("/api")]
+        [Route("/")]
         public string Index()
         {
             StringBuilder sb = new StringBuilder();
 
             sb.Append("NAT Track API\n\nUsage:\n");
-            sb.Append("Get all tracks: /api/tracks\n");
-            sb.Append("Get all tracks (altitude as metres): /api/tracks?si=true\n");
-            sb.Append("Get single track: /api/tracks?id={track ID} (eg: /api/tracks?id=a)\n");
-            sb.Append("Get single track (altitude as metres): /api/tracks?id={track ID}&si=true\n\n");
-            sb.Append("Author: Andrew Ogden (1336925)");
+            sb.Append("Get all tracks: /data\n");
+            sb.Append("Get all tracks (altitude as metres): /data?si=true\n");
+            sb.Append("Get single track: /data?id={track ID} (eg: /data?id=a)\n");
+            sb.Append("Get single track (altitude as metres): /data?id={track ID}&si=true (eg: /data?id=a&si=true)\n");
 
             return sb.ToString();
         }
 
         /// <summary>
-        /// Get all tracks (api/tracks/{si?}) or single track (api/tracks/{id?}/{si?})
+        /// Get all tracks or single track
         /// </summary>
         /// <param name="metres">SI Units?</param>
         /// <returns>All NAT Tracks as Track objects</returns>
         [HttpGet]
+        [Route("/data")]
         public JsonResult Get(string id = null, bool si = false)
         {
             // Return specific track
