@@ -23,7 +23,8 @@ namespace NAT_Tracks.Controllers
             sb.Append("Get all tracks: /data\n");
             sb.Append("Get all tracks (altitude as metres): /data?si=true\n");
             sb.Append("Get single track: /data?id={track ID} (eg: /data?id=a)\n");
-            sb.Append("Get single track (altitude as metres): /data?id={track ID}&si=true (eg: /data?id=a&si=true)\n");
+            sb.Append("Get single track (altitude as metres): /data?id={track ID}&si=true (eg: /data?id=a&si=true)\n\n");
+            sb.Append("GitHub: https://github.com/andrewogden1678/NAT-Tracks");
 
             return sb.ToString();
         }
