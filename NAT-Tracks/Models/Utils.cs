@@ -64,7 +64,7 @@ namespace NAT_Tracks.Models
                     }
                     else if (splitList[i].Contains("TMI IS")) 
                     {
-                        tmi = Convert.ToString(splitList[i][10] + splitList[i][11] + splitList[i][12]);
+                        tmi = Convert.ToString(splitList[i][10]) + Convert.ToString(splitList[i][11]) + Convert.ToString(splitList[i][12]);
 
                         // Add amendment character if exists
                         if (char.IsLetter(splitList[i][13])) tmi += splitList[i][13];
