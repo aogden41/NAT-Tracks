@@ -16,6 +16,9 @@ namespace NAT_Tracks.Models
         private const string _trackUrl = "https://www.notams.faa.gov/common/nat.html";
         private const string _fixesJson = "https://resources.ganderoceanic.com/data/fixes.json";
 
+        // List of months
+        private static readonly string[] _months = { "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC" };
+
         public static List<Track> ParseTracks(bool isMetres = false)
         {
             // NAT tracks
@@ -35,6 +38,9 @@ namespace NAT_Tracks.Models
 
             // Track
             List<string> track = new List<string>();
+
+            string validFrom = String.Empty;
+            string validTo = String.Empty;
 
             string tmi = string.Empty;
 
@@ -68,6 +74,19 @@ namespace NAT_Tracks.Models
 
                         // Add amendment character if exists
                         if (char.IsLetter(splitList[i][13])) tmi += splitList[i][13];
+                    } else
+                    {
+                        for (int j = 0; j < _months.Length; j++)
+                        {
+                            if (splitList[i].Contains(_months[j]))
+                            {
+                                string[] splitString = splitList[i].Split('/');
+                                validFrom = splitString[0][splitString[0].Length - 2].ToString() + splitString[0][splitString[0].Length - 1].ToString() 
+                                    + "/" + splitString[1][0].ToString() + splitString[1][1].ToString() + splitString[1][2].ToString() + splitString[1][3].ToString();
+                                validTo = splitString[0][splitString[0].Length - 2].ToString() + splitString[0][splitString[0].Length - 1].ToString()
+                                    + "/" + splitString[2][0].ToString() + splitString[2][1].ToString() + splitString[2][2].ToString() + splitString[2][3].ToString();
+                            }
+                        }
                     }
                 }
                 catch (Exception) // Catch any exception
@@ -170,7 +189,9 @@ namespace NAT_Tracks.Models
                     TMI = tmi,
                     Route = finalRoute,
                     Direction = direction,
-                    FlightLevels = flightLevels
+                    FlightLevels = flightLevels,
+                    ValidFrom = validFrom,
+                    ValidTo = validTo
                 };
 
                 returnList.Add(trackObj);

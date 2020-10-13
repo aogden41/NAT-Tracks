@@ -31,6 +31,16 @@ namespace NAT_Tracks.Models
         /// Direction of traffic flow (enum value)
         /// </summary>
         public Direction Direction { get; set; }
+
+        /// <summary>
+        /// Time the track is valid from
+        /// </summary>
+        public string ValidFrom { get; set; }
+
+        /// <summary>
+        /// Time track is valid to
+        /// </summary>
+        public string ValidTo { get; set; }
     }
 
     /// <summary>

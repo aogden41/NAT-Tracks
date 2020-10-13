@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
 using Microsoft.AspNetCore.Mvc;
 using NAT_Tracks.Models;
+using System.Net;
 
 namespace NAT_Tracks.Controllers
 {
@@ -23,7 +25,9 @@ namespace NAT_Tracks.Controllers
             sb.Append("Get all tracks: /data\n");
             sb.Append("Get all tracks (altitude as metres): /data?si=true\n");
             sb.Append("Get single track: /data?id={track ID} (eg: /data?id=a)\n");
-            sb.Append("Get single track (altitude as metres): /data?id={track ID}&si=true (eg: /data?id=a&si=true)\n\n");
+            sb.Append("Get single track (altitude as metres): /data?id={track ID}&si=true (eg: /data?id=a&si=true)\n");
+            sb.Append("Get all CTP tracks: /ctp\n\n");
+            //sb.Append("Get single CTP track: /ctp?id={track ID} (eg: /data?id=a)\n");
             sb.Append("GitHub: https://github.com/andrewogden1678/NAT-Tracks");
 
             return sb.ToString();
@@ -52,6 +56,24 @@ namespace NAT_Tracks.Controllers
             if (si) return Json(Utils.ParseTracks(si));
 
             else return Json(Utils.ParseTracks());
+        }
+
+        /// <summary>
+        /// Get all CTP tracks or single CTP track
+        /// </summary>
+        /// <returns>All NAT Tracks as Track objects</returns>
+        [HttpGet]
+        [Route("/ctp")]
+        public JsonResult GetCTP(string id = null)
+        {
+            // CTP path
+            string path = "https://resources.ganderoceanic.com/data/ctptracks.json";
+
+            // Return
+            using (WebClient client = new WebClient())
+            {
+                return Json(client.DownloadString(path));
+            }
         }
     }
 }
