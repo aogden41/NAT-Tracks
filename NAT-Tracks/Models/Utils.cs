@@ -70,28 +70,40 @@ namespace NAT_Tracks.Models
                     }
                     else if (splitList[i].Contains("TMI IS")) 
                     {
-                        tmi = Convert.ToString(splitList[i][10]) + Convert.ToString(splitList[i][11]) + Convert.ToString(splitList[i][12]);
+                        // Get the tmi
+                        tmi = Convert.ToString(splitList[i][splitList[i].IndexOf("TMI IS") + 7]) + Convert.ToString(splitList[i][splitList[i].IndexOf("TMI IS") + 8]) + Convert.ToString(splitList[i][splitList[i].IndexOf("TMI IS") + 9]);
 
-                        // Add amendment character if exists
-                        if (char.IsLetter(splitList[i][13])) tmi += splitList[i][13];
-                    } else
+                        // Add amendment character if it exists
+                        if (char.IsLetter(splitList[i][splitList[i].IndexOf("TMI IS") + 10]))
+                        {
+                            tmi += Convert.ToString(splitList[i][splitList[i].IndexOf("TMI IS") + 10]);
+                        }
+
+                    } 
+                    else
                     {
                         for (int j = 0; j < _months.Length; j++)
                         {
                             if (splitList[i].Contains(_months[j]))
                             {
+                                // Get time
                                 string[] splitString = splitList[i].Split('/');
                                 validFrom = splitString[0][splitString[0].Length - 2].ToString() + splitString[0][splitString[0].Length - 1].ToString() 
                                     + "/" + splitString[1][0].ToString() + splitString[1][1].ToString() + splitString[1][2].ToString() + splitString[1][3].ToString();
                                 validTo = splitString[0][splitString[0].Length - 2].ToString() + splitString[0][splitString[0].Length - 1].ToString()
                                     + "/" + splitString[2][0].ToString() + splitString[2][1].ToString() + splitString[2][2].ToString() + splitString[2][3].ToString();
-                            }
+                                // Parse the time
+                                DateTime time = new DateTime(DateTime.UtcNow.Year, j + 1, Convert.ToInt32(validFrom.Split('/')[0]), Convert.ToInt32(validFrom.Split('/')[1].Substring(0, 2)), Convert.ToInt32(validFrom.Split('/')[1].Substring(2, 2)), 0);
+                                validFrom = time.ToString().Substring(0, time.ToString().Length - 3);
+                                time = new DateTime(DateTime.UtcNow.Year, j + 1, Convert.ToInt32(validTo.Split('/')[0]), Convert.ToInt32(validTo.Split('/')[1].Substring(0, 2)), Convert.ToInt32(validTo.Split('/')[1].Substring(2, 2)), 0);
+                                validTo = time.ToString().Substring(0, time.ToString().Length - 3);
+                            }                            
                         }
                     }
                 }
-                catch (Exception) // Catch any exception
+                catch (Exception ex) // Catch any exception
                 {
-                    break;
+                    continue;
                 }
             }
 
