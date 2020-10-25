@@ -167,7 +167,7 @@ namespace NAT_Tracks.Models
 
                         // Parse lat/lon to a double value
                         double latitude = double.Parse(newPoint[0]);
-                        double longitude = double.Parse(newPoint[1]);
+                        double longitude = -(double.Parse(newPoint[1]));
 
                         StringBuilder sb = new StringBuilder();
 
