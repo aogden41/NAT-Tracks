@@ -39,6 +39,8 @@ namespace NAT_Tracks.Models
             // Track
             List<string> track = new List<string>();
 
+            List<string> validities = new List<string>();
+
             string validFrom = String.Empty;
             string validTo = String.Empty;
 
@@ -94,9 +96,10 @@ namespace NAT_Tracks.Models
                                     + "/" + splitString[2][0].ToString() + splitString[2][1].ToString() + splitString[2][2].ToString() + splitString[2][3].ToString();
                                 // Parse the time
                                 DateTime time = new DateTime(DateTime.UtcNow.Year, j + 1, Convert.ToInt32(validFrom.Split('/')[0]), Convert.ToInt32(validFrom.Split('/')[1].Substring(0, 2)), Convert.ToInt32(validFrom.Split('/')[1].Substring(2, 2)), 0);
-                                validFrom = time.ToString().Substring(0, time.ToString().Length - 3);
+                                validFrom = time.ToString("yyyy/MM/dd, HH:mm:ss");
                                 time = new DateTime(DateTime.UtcNow.Year, j + 1, Convert.ToInt32(validTo.Split('/')[0]), Convert.ToInt32(validTo.Split('/')[1].Substring(0, 2)), Convert.ToInt32(validTo.Split('/')[1].Substring(2, 2)), 0);
-                                validTo = time.ToString().Substring(0, time.ToString().Length - 3);
+                                validTo = time.ToString("yyyy/MM/dd, HH:mm:ss");
+                                validities.Add(validFrom + "?" + validTo);
                             }                            
                         }
                     }
@@ -111,6 +114,7 @@ namespace NAT_Tracks.Models
             List<Track> returnList = new List<Track>();
 
             // Build track objects
+            int counter = 0;
             foreach(List<string> list in parsedList)
             {
                 // Direction & Flight levels
@@ -202,11 +206,12 @@ namespace NAT_Tracks.Models
                     Route = finalRoute,
                     Direction = direction,
                     FlightLevels = flightLevels,
-                    ValidFrom = validFrom,
-                    ValidTo = validTo
+                    ValidFrom = validities[counter].Split("?")[0],
+                    ValidTo = validities[counter].Split("?")[1],
                 };
 
                 returnList.Add(trackObj);
+                counter++;
             }
 
             return returnList;
