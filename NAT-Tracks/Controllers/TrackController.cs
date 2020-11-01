@@ -26,7 +26,7 @@ namespace NAT_Tracks.Controllers
             sb.Append("Get all tracks (altitude as metres): /data?si=true\n");
             sb.Append("Get single track: /data?id={track ID} (eg: /data?id=a)\n");
             sb.Append("Get single track (altitude as metres): /data?id={track ID}&si=true (eg: /data?id=a&si=true)\n");
-            sb.Append("Get all CTP tracks: /ctp\n\n");
+            sb.Append("Get all event tracks: /event\n\n");
             //sb.Append("Get single CTP track: /ctp?id={track ID} (eg: /data?id=a)\n");
             sb.Append("GitHub: https://github.com/andrewogden1678/NAT-Tracks");
 
@@ -63,16 +63,16 @@ namespace NAT_Tracks.Controllers
         /// </summary>
         /// <returns>All NAT Tracks as Track objects</returns>
         [HttpGet]
-        [Route("/ctp")]
-        public JsonResult GetCTP(string id = null)
+        [Route("/event")]
+        public ContentResult GetEvent(string id = null)
         {
             // CTP path
-            string path = "https://resources.ganderoceanic.com/data/ctptracks.json";
+            string path = "https://resources.ganderoceanic.com/data/eventtracks.json";
 
             // Return
             using (WebClient client = new WebClient())
             {
-                return Json(client.DownloadString(path));
+                return Content(client.DownloadString(path));
             }
         }
     }
