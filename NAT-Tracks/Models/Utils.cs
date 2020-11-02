@@ -33,6 +33,9 @@ namespace NAT_Tracks.Models
             // Parse even further
             List<List<string>> parsedList = new List<List<string>>();
 
+            // So we can know which track corresponds to which date
+            List<int> lineNumbers = new List<int>();
+            
             // Dodgy but it works :)
             int getNextFour = 0;
 
@@ -64,6 +67,7 @@ namespace NAT_Tracks.Models
                             getNextFour = 0;
                             parsedList.Add(track);
                             track = new List<string>();
+                            lineNumbers.Add(i);
                             continue;
                         }
 
@@ -86,6 +90,7 @@ namespace NAT_Tracks.Models
                     {
                         for (int j = 0; j < _months.Length; j++)
                         {
+                            bool reached = false;
                             if (splitList[i].Contains(_months[j]))
                             {
                                 // Get time
@@ -99,8 +104,14 @@ namespace NAT_Tracks.Models
                                 validFrom = time.ToString("yyyy/MM/dd, HH:mm:ss");
                                 time = new DateTime(DateTime.UtcNow.Year, j + 1, Convert.ToInt32(validTo.Split('/')[0]), Convert.ToInt32(validTo.Split('/')[1].Substring(0, 2)), Convert.ToInt32(validTo.Split('/')[1].Substring(2, 2)), 0);
                                 validTo = time.ToString("yyyy/MM/dd, HH:mm:ss");
-                                validities.Add(validFrom + "?" + validTo);
-                            }                            
+                                validities.Add(validFrom + "?" + validTo + "?" + i);
+                                reached = true;
+                            }
+                            if (reached) // For performance
+                            {
+                                break;
+                            }
+                       
                         }
                     }
                 }
@@ -206,8 +217,8 @@ namespace NAT_Tracks.Models
                     Route = finalRoute,
                     Direction = direction,
                     FlightLevels = flightLevels,
-                    ValidFrom = validities[counter].Split("?")[0],
-                    ValidTo = validities[counter].Split("?")[1],
+                    ValidFrom = validities[Int32.Parse(validities[1].Split("?")[2]) > lineNumbers[counter] ? 0 : 1].Split("?")[0],
+                    ValidTo = validities[Int32.Parse(validities[1].Split("?")[2]) > lineNumbers[counter] ? 0 : 1].Split("?")[1]
                 };
 
                 returnList.Add(trackObj);
