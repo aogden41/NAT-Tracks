@@ -101,9 +101,9 @@ namespace NAT_Tracks.Models
                                     + "/" + splitString[2][0].ToString() + splitString[2][1].ToString() + splitString[2][2].ToString() + splitString[2][3].ToString();
                                 // Parse the time
                                 DateTime time = new DateTime(DateTime.UtcNow.Year, j + 1, Convert.ToInt32(validFrom.Split('/')[0]), Convert.ToInt32(validFrom.Split('/')[1].Substring(0, 2)), Convert.ToInt32(validFrom.Split('/')[1].Substring(2, 2)), 0);
-                                validFrom = time.ToString("yyyy/MM/dd, HH:mm:ss");
+                                validFrom = Convert.ToString(time.Subtract(new DateTime(1970, 1, 1)).TotalSeconds);
                                 time = new DateTime(DateTime.UtcNow.Year, j + 1, Convert.ToInt32(validTo.Split('/')[0]), Convert.ToInt32(validTo.Split('/')[1].Substring(0, 2)), Convert.ToInt32(validTo.Split('/')[1].Substring(2, 2)), 0);
-                                validTo = time.ToString("yyyy/MM/dd, HH:mm:ss");
+                                validTo = Convert.ToString(time.Subtract(new DateTime(1970, 1, 1)).TotalSeconds);
                                 validities.Add(validFrom + "?" + validTo + "?" + i);
                                 reached = true;
                             }
