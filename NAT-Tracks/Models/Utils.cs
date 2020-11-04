@@ -217,8 +217,8 @@ namespace NAT_Tracks.Models
                     Route = finalRoute,
                     Direction = direction,
                     FlightLevels = flightLevels,
-                    ValidFrom = validities[Int32.Parse(validities[1].Split("?")[2]) > lineNumbers[counter] ? 0 : 1].Split("?")[0],
-                    ValidTo = validities[Int32.Parse(validities[1].Split("?")[2]) > lineNumbers[counter] ? 0 : 1].Split("?")[1]
+                    ValidFrom = validities.Count > 1 ? validities[Int32.Parse(validities[1].Split("?")[2]) > lineNumbers[counter] ? 0 : 1].Split("?")[0] : validities[0].Split("?")[0],
+                    ValidTo = validities.Count > 1 ? validities[Int32.Parse(validities[1].Split("?")[2]) > lineNumbers[counter] ? 0 : 1].Split("?")[1] : validities[0].Split("?")[1]
                 };
 
                 returnList.Add(trackObj);
