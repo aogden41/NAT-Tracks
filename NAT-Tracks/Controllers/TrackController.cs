@@ -67,7 +67,7 @@ namespace NAT_Tracks.Controllers
         public ContentResult GetEvent(string id = null)
         {
             // CTP path
-            string path = "https://resources.ganderoceanic.com/data/eventtracks.json";
+            string path = "https://cdn.ganderoceanic.com/resources/data/eventTracks.json";
 
             // Return
             using (WebClient client = new WebClient())
