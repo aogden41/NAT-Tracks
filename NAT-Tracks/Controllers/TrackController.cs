@@ -17,7 +17,7 @@ namespace NAT_Tracks.Controllers
         /// <returns>API instructions</returns>
         [HttpGet]
         [Route("/")]
-        public string Index()
+        public RedirectResult Index()
         {
             //Redirect to usage page on ganderoceanic.com
             return Redirect("https://ganderoceanic.com/nat-track-api-usage");
