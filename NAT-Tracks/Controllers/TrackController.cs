@@ -65,5 +65,19 @@ namespace NAT_Tracks.Controllers
                 return Content(client.DownloadString(path));
             }
         }
+
+        [HttpGet]
+        [Route("/concorde")]
+        public ContentResule GetConcordeTracks()
+        {
+            // Path
+            string path = "https://ams3.digitaloceanspaces.com/ganderoceanicoca/resources/data/concordeTracks.json";
+
+            // Return
+            using (WebClient client = new WebClient()) 
+            {
+                return Content(cilent.DownloadString(path));
+            }
+        }
     }
 }
