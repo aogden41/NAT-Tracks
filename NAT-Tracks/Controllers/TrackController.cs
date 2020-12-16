@@ -68,7 +68,7 @@ namespace NAT_Tracks.Controllers
 
         [HttpGet]
         [Route("/concorde")]
-        public ContentResule GetConcordeTracks()
+        public ContentResult GetConcordeTracks()
         {
             // Path
             string path = "https://ams3.digitaloceanspaces.com/ganderoceanicoca/resources/data/concordeTracks.json";
