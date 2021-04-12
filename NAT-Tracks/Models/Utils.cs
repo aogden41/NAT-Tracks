@@ -14,7 +14,7 @@ namespace NAT_Tracks.Models
     {
         // Static URLs
         private const string _trackUrl = "https://www.notams.faa.gov/common/nat.html";
-        private const string _fixesJson = "https://resources.ganderoceanic.com/data/fixes.json";
+        private const string _fixesJson = "https://cdn.ganderoceanic.com/resources/data/fixes.json";
 
         // List of months
         private static readonly string[] _months = { "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC" };
