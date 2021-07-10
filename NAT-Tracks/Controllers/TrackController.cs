@@ -17,20 +17,10 @@ namespace NAT_Tracks.Controllers
         /// <returns>API instructions</returns>
         [HttpGet]
         [Route("/")]
-        public string Index()
+        public RedirectResult Index()
         {
-            StringBuilder sb = new StringBuilder();
-
-            sb.Append("NAT Track API\n\nUsage:\n");
-            sb.Append("Get all tracks: /data\n");
-            sb.Append("Get all tracks (altitude as metres): /data?si=true\n");
-            sb.Append("Get single track: /data?id={track ID} (eg: /data?id=a)\n");
-            sb.Append("Get single track (altitude as metres): /data?id={track ID}&si=true (eg: /data?id=a&si=true)\n");
-            sb.Append("Get all event tracks: /event\n\n");
-            //sb.Append("Get single CTP track: /ctp?id={track ID} (eg: /data?id=a)\n");
-            sb.Append("GitHub: https://github.com/andrewogden1678/NAT-Tracks");
-
-            return sb.ToString();
+            //Redirect to usage page on ganderoceanic.com
+            return Redirect("https://ganderoceanic.com/nat-track-api-usage");
         }
 
         /// <summary>
@@ -68,6 +58,20 @@ namespace NAT_Tracks.Controllers
         {
             // CTP path
             string path = "https://cdn.ganderoceanic.com/resources/data/eventTracks.json";
+
+            // Return
+            using (WebClient client = new WebClient())
+            {
+                return Content(client.DownloadString(path));
+            }
+        }
+
+        [HttpGet]
+        [Route("/concorde")]
+        public ContentResult GetConcordeTracks()
+        {
+            // Path
+            string path = "https://ams3.digitaloceanspaces.com/ganderoceanicoca/resources/data/concordeTracks.json";
 
             // Return
             using (WebClient client = new WebClient())
