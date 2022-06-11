@@ -55,7 +55,7 @@ namespace NAT_Tracks.Models
                 try
                 {
                     // If the row is a track routing
-                    if ((char.IsLetter(splitList[i][0]) && char.IsWhiteSpace(splitList[i][1])) || getNextFour > 0)
+                    if ((char.IsLetter(splitList[i][0]) && char.IsWhiteSpace(splitList[i][1]) && char.IsLetter(splitList[i][3])) || getNextFour > 0)
                     {
                         // Start incrementing to get the next four rows
                         getNextFour++;
